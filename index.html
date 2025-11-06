@@ -139,3 +139,126 @@
       <div class="result" id="result">⏳ En attente...</div>
     </section>
   </div>
+
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      if(id === 'compare') resetCompareForm(); // réinitialiser dès qu'on revient sur comparer
+    }
+
+    const blacklist = [];
+    function addToBlacklist(event) {
+      event.preventDefault();
+      const nom = document.getElementById('nom').value.trim();
+      if (nom) {
+        if (!blacklist.includes(nom)) {
+          blacklist.push(nom);
+          updateBlacklist();
+        }
+        document.getElementById('nom').value = '';
+      }
+    }
+
+    function updateBlacklist() {
+      document.getElementById('blacklist-list').innerHTML = blacklist.map(n => `<li>${n}</li>`).join('');
+    }
+
+    // --- Réinitialisation du formulaire ---
+    function resetCompareForm() {
+      document.getElementById('nomEtudiant1').value = '';
+      document.getElementById('nomEtudiant2').value = '';
+      document.getElementById('text1').value = '';
+      document.getElementById('text2').value = '';
+      document.getElementById('result').innerHTML = '⏳ En attente...';
+      document.getElementById('progress-bar').style.width = '0%';
+      document.getElementById('progress-bar').textContent = '0%';
+    }
+
+    // --- Comparaison ---
+    function compareTexts() {
+      const text1 = document.getElementById('text1').value.trim();
+      const text2 = document.getElementById('text2').value.trim();
+      const nom1 = document.getElementById('nomEtudiant1').value.trim();
+      const nom2 = document.getElementById('nomEtudiant2').value.trim();
+
+      if (!text1 || !text2 || !nom1 || !nom2) {
+        alert("Veuillez remplir tous les champs !");
+        return;
+      }
+
+      const result = document.getElementById('result');
+      const progressBar = document.getElementById('progress-bar');
+      const flash = document.getElementById('flash');
+
+      let percent = 0;
+      const interval = setInterval(() => {
+        percent += 10;
+        progressBar.style.width = percent + '%';
+        progressBar.textContent = percent + '%';
+        if (percent >= 100) {
+          clearInterval(interval);
+
+          const similarity = calculateSimilarity(text1, text2);
+          progressBar.textContent = Math.round(similarity) + '%';
+
+          if (similarity > 80) {
+            flash.style.display = 'block';
+            result.innerHTML = `🚨 <strong>${nom1}</strong> & <strong>${nom2}</strong> — ${Math.round(similarity)}% de similarité<br>⚠️ Plagiat détecté !`;
+            setTimeout(() => flash.style.display = 'none', 2000);
+
+            [nom1, nom2].forEach(nom => {
+              if (!blacklist.includes(nom)) {
+                blacklist.push(nom);
+              }
+            });
+            updateBlacklist();
+
+            fetch('/add_blacklist', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({etudiant1: nom1, etudiant2: nom2, similarite: similarity})
+            });
+
+          } else {
+            result.innerHTML = `🎉 <strong>${nom1}</strong> & <strong>${nom2}</strong> — ${Math.round(similarity)}% de similarité<br>Textes originaux ✅`;
+            launchConfetti();
+          }
+
+          setTimeout(resetCompareForm, 2500); // reset automatique après 2.5s
+        }
+      }, 150);
+    }
+
+    function calculateSimilarity(a, b) {
+      if (!a || !b) return 0;
+      const wordsA = a.split(/\s+/);
+      const wordsB = b.split(/\s+/);
+      const common = wordsA.filter(word => wordsB.includes(word));
+      return (common.length / Math.max(wordsA.length, wordsB.length)) * 100;
+    }
+
+    function launchConfetti() {
+      const count = 80;
+      for (let i = 0; i < count; i++) {
+        const conf = document.createElement('div');
+        conf.style.position = 'fixed';
+        conf.style.top = Math.random() * window.innerHeight + 'px';
+        conf.style.left = Math.random() * window.innerWidth + 'px';
+        conf.style.width = '8px';
+        conf.style.height = '8px';
+        conf.style.borderRadius = '50%';
+        conf.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        conf.style.opacity = '0.8';
+        conf.style.animation = `fall ${1 + Math.random() * 2}s linear forwards`;
+        document.body.appendChild(conf);
+        setTimeout(() => conf.remove(), 2000);
+      }
+    }
+
+    const style = document.createElement('style');
+    style.innerHTML = `@keyframes fall {to {transform: translateY(100vh) rotate(720deg); opacity: 0;}}`;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
