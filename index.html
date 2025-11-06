@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>ABIF – Détection de Plagiat 🚀</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    * {margin:0; padding:0; box-sizing:border-box;}
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, #74ebd5, #acb6e5, #00b4db, #0083b0);
+      background-size: 400% 400%;
+      animation: gradientMove 10s ease infinite;
+      color: #fff;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    @keyframes gradientMove {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+    .app {
+      width: 90%;
+      max-width: 950px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 25px;
+      backdrop-filter: blur(15px);
+      padding: 40px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: zoomIn 1.2s ease;
+    }
+    @keyframes zoomIn {
+      from {transform: scale(0.8); opacity: 0;}
+      to {transform: scale(1); opacity: 1;}
+    }
