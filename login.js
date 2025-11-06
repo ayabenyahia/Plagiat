@@ -7,7 +7,7 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
 
   // Identifiants valides
   const validUsername = "aya";
-  const validPassword = "1234";
+  const validPassword = "2006";
 
   if (username === validUsername && password === validPassword) {
     localStorage.setItem("loggedIn", "true");
