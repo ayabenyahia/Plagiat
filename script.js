@@ -77,3 +77,36 @@ function genererDiff(t1, t2) {
   }
   return { diff1, diff2 };
 }
+
+document.getElementById("comparerBtn").addEventListener("click", () => {
+  const texte1 = document.getElementById("texte1").value.trim();
+  const texte2 = document.getElementById("texte2").value.trim();
+  const nom = document.getElementById("nomEtudiant").value.trim();
+
+  if (!texte1 || !texte2 || !nom) {
+    alert("Veuillez remplir tous les champs !");
+    return;
+  }
+
+  const taux = calculerSimilarite(texte1, texte2);
+  const { msg, color } = interpretation(taux);
+
+  const diag = document.getElementById("diagnostic");
+  diag.textContent = `${msg} (${taux}%)`;
+  diag.style.color = color;
+
+  const progress = document.getElementById("progress-bar");
+  progress.style.width = taux + "%";
+  progress.style.backgroundColor = color;
+  progress.textContent = taux + "%";
+
+  const { diff1, diff2 } = genererDiff(texte1, texte2);
+  document.getElementById("diff1").innerHTML = diff1;
+  document.getElementById("diff2").innerHTML = diff2;
+
+  // Si plagiat fort, on ajoute le nom à la blacklist
+  if (taux > 70 && !blacklist.includes(nom)) {
+    blacklist.push(nom);
+    afficherBlacklist();
+  }
+});
