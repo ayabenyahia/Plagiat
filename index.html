@@ -40,3 +40,62 @@
       from {transform: scale(0.8); opacity: 0;}
       to {transform: scale(1); opacity: 1;}
     }
+   h1 {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #ffcc00, #ff0066);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+    }
+    .subtitle {opacity: 0.9; margin-bottom: 25px; font-size: 1.1rem;}
+    .nav-buttons {display: flex; justify-content: center; gap: 15px; margin-bottom: 35px;}
+    .btn {
+      padding: 12px 30px;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(45deg, #00b4db, #0083b0);
+      color: #fff; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .btn:hover {transform: scale(1.08); background: linear-gradient(45deg, #f9d423, #ff4e50);}
+    section {display: none; animation: fadeIn 0.8s ease;}
+    section.active {display: block;}
+    @keyframes fadeIn {from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);}}
+    .blacklist-form input {padding: 10px; border-radius: 10px; border: none; width: 60%; outline: none; margin-right: 10px;}
+    .blacklist-form button {
+      padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer;
+      background: #ff4e50; color: white; font-weight: bold; transition: 0.3s;
+    }
+    .blacklist-form button:hover {background: #f9d423; color: #333;}
+    ul.blacklist {list-style: none; margin-top: 20px;}
+    ul.blacklist li {background: rgba(255,255,255,0.2); margin: 5px 0; padding: 10px; border-radius: 10px; transition: 0.3s;}
+    ul.blacklist li:hover {background: rgba(255,255,255,0.4);}
+    input, textarea {
+      width: 90%; border-radius: 10px; border: none; padding: 10px;
+      resize: none; outline: none; margin-bottom: 15px;
+      background: rgba(255,255,255,0.2); color: #fff; font-size: 1rem;
+    }
+    .compare-btn {
+      background: linear-gradient(45deg, #56ab2f, #a8e063);
+      color: #fff; padding: 12px 35px; border: none; border-radius: 50px;
+      font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s;
+    }
+    .compare-btn:hover {transform: scale(1.05);}
+    .progress {
+      background: rgba(255,255,255,0.3); border-radius: 30px; height: 25px; margin-top: 15px; overflow: hidden;
+    }
+    .progress-bar {
+      height: 25px; width: 0%; border-radius: 30px;
+      background: linear-gradient(90deg, #f9d423, #ff4e50);
+      text-align: center; color: #fff; font-weight: bold; transition: width 1s ease;
+    }
+    .result {margin-top: 20px; font-size: 1.3rem;}
+    #flash {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255, 0, 0, 0.6); z-index: 999; display: none; animation: flashAnim 0.3s infinite alternate;
+    }
+    @keyframes flashAnim {from {opacity: 0.3;} to {opacity: 1;}}
+  </style>
+</head>
+<body>  
