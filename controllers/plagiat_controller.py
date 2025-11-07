@@ -5,15 +5,15 @@ from mysql.connector import pooling
 from datetime import datetime
 import traceback
 
-# Création du Blueprint
+# =====================================================
+# Création du Blueprint et du modèle
+# =====================================================
 plagiat_bp = Blueprint('plagiat', __name__)
-
-# Instance du modèle
 analyzer = TextAnalyzer()
 
-# ========================================
-# Configuration base de données avec pool
-# ========================================
+# =====================================================
+# Configuration base de données avec pool de connexions
+# =====================================================
 db_config = {
     'host': 'localhost',
     'user': 'root',
@@ -21,21 +21,17 @@ db_config = {
     'database': 'black_list_db'
 }
 
-# Pool de connexions (max 5 connexions)
 db_pool = mysql.connector.pooling.MySQLConnectionPool(
     pool_name="mypool",
     pool_size=5,
     **db_config
 )
 
-# ========================================
-# Fonction pour ajouter un utilisateur à la blacklist
-# ========================================
+# =====================================================
+# Fonction utilitaire : ajouter un utilisateur à la blacklist
+# =====================================================
 def add_to_blacklist(user_id, similarity_percentage):
-    """
-    Ajoute un utilisateur à la table personnes_blacklistees
-    si la similarité dépasse 80%
-    """
+    """Ajoute un utilisateur à la table personnes_blacklistees si similarité >= 80%"""
     if not user_id:
         print("user_id invalide, blacklist non ajoutée")
         return
@@ -43,17 +39,15 @@ def add_to_blacklist(user_id, similarity_percentage):
     try:
         conn = db_pool.get_connection()
         cursor = conn.cursor()
-
         sql = """
         INSERT INTO personnes_blacklistees (identifiant, raison, date_ajout)
         VALUES (%s, %s, %s)
         """
         raison = f"Similarité {similarity_percentage:.2f}%"
         date_ajout = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
         cursor.execute(sql, (user_id, raison, date_ajout))
         conn.commit()
-        print(f"Utilisateur {user_id} ajouté à la blacklist")
+        print(f"✅ Utilisateur {user_id} ajouté à la blacklist ({similarity_percentage:.2f}%)")
 
     except Exception as e:
         print(f"Erreur ajout blacklist: {e}")
@@ -64,9 +58,9 @@ def add_to_blacklist(user_id, similarity_percentage):
         if conn:
             conn.close()
 
-# ========================================
-# ROUTE 1 : Health Check
-# ========================================
+# =====================================================
+# ROUTE 1 : Vérification de l’état de l’API
+# =====================================================
 @plagiat_bp.route('/api/health', methods=['GET'])
 def health_check():
     return jsonify({
@@ -75,9 +69,9 @@ def health_check():
         'version': '1.1'
     }), 200
 
-# ========================================
-# ROUTE 2 : Nettoyage de texte uniquement
-# ========================================
+# =====================================================
+# ROUTE 2 : Nettoyage de texte
+# =====================================================
 @plagiat_bp.route('/api/clean-text', methods=['POST'])
 def clean_text():
     try:
@@ -93,13 +87,12 @@ def clean_text():
         return jsonify({'success': True, 'original_text': text, 'cleaned_text': cleaned}), 200
 
     except Exception as e:
-        print(f"Erreur clean_text: {e}")
         traceback.print_exc()
-        return jsonify({'error': f'Erreur: {str(e)}', 'success': False}), 500
+        return jsonify({'error': str(e), 'success': False}), 500
 
-# ========================================
-# ROUTE 8 : Comparaison complète
-# ========================================
+# =====================================================
+# ROUTE 3 : Comparaison complète + ajout blacklist
+# =====================================================
 @plagiat_bp.route('/api/compare', methods=['POST'])
 def compare_texts():
     try:
@@ -112,10 +105,9 @@ def compare_texts():
         if not text1.strip() or not text2.strip():
             return jsonify({'error': 'Les textes ne peuvent pas être vides', 'success': False}), 400
 
-        # Analyse complète
         result = analyzer.analyze_similarity(text1, text2)
 
-        # Ajout à la blacklist si user_id fourni et similarité >= 80%
+        # Ajout auto à la blacklist si similaire à 80% ou plus
         user_id = data.get('user_id')
         if user_id and result['similarity_percentage'] >= 80:
             add_to_blacklist(user_id, result['similarity_percentage'])
@@ -128,28 +120,25 @@ def compare_texts():
         }), 200
 
     except Exception as e:
-        print(f"Erreur compare_texts: {e}")
         traceback.print_exc()
-        return jsonify({'error': f'Erreur: {str(e)}', 'success': False}), 500
+        return jsonify({'error': str(e), 'success': False}), 500
 
-# ========================================
-# ROUTE pour consulter la blacklist
-# ========================================
+# =====================================================
+# ROUTE 4 : Afficher la blacklist
+# =====================================================
 @plagiat_bp.route('/api/blacklist', methods=['GET'])
 def get_blacklist():
     try:
         conn = db_pool.get_connection()
         cursor = conn.cursor(dictionary=True)
-
         cursor.execute("SELECT * FROM personnes_blacklistees ORDER BY date_ajout DESC")
         results = cursor.fetchall()
 
         return jsonify({'success': True, 'blacklist': results}), 200
 
     except Exception as e:
-        print(f"Erreur get_blacklist: {e}")
         traceback.print_exc()
-        return jsonify({'error': f'Erreur: {str(e)}', 'success': False}), 500
+        return jsonify({'error': str(e), 'success': False}), 500
     finally:
         if cursor:
             cursor.close()
