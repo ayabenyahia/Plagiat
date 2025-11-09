@@ -1,6 +1,6 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #0083b0, #0083b0);
+  background: linear-gradient(135deg, #b3e5fc, #d1c4e9); /* bleu ciel & lilas */
   margin: 0;
   height: 100vh;
   display: flex;
@@ -9,61 +9,89 @@ body {
 }
 
 .login-container {
-  background: #ea9148;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-  width: 350px;
+  background: linear-gradient(135deg, #f6e9ff, #ffe7d1); /* lilas clair + orange doux */
+  padding: 25px 50px; /* moins haut */
+  border-radius: 25px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 420px; /* largeur confortable */
   text-align: center;
+  transition: all 0.3s ease;
+}
+
+.login-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
 h2 {
-  color: #67355d;
-  margin-bottom: 25px;
+  color: #6a1b9a;
+  margin-bottom: 15px; /* réduit */
+  font-size: 24px;
+  letter-spacing: 1px;
 }
 
 label {
   display: block;
   text-align: left;
-  margin: 10px 0 5px;
-  font-weight: bold;
-  color: #ffffff;
+  margin: 6px 0 3px; /* réduit verticalement */
+  font-weight: 600;
+  color: #4a148c;
+  font-size: 14.5px;
 }
 
 input {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #5a81ff;
-  font-size: 18px;
+  padding: 8px 10px; /* plus compact */
+  border: 1.5px solid #ba68c8;
+  border-radius: 8px;
+  font-size: 15px;
   outline: none;
   transition: 0.3s;
+  background: #fff;
 }
 
 input:focus {
-  border-color: #00796b;
-  box-shadow: 0 0 5px rgba(0,121,107,0.3);
+  border-color: #7e57c2;
+  box-shadow: 0 0 6px rgba(126, 87, 194, 0.3);
 }
 
 button {
-  margin-top: 20px;
-  width: 40%;
-  padding: 12px;
-  background: #67355d;
+  margin-top: 15px; /* réduit */
+  width: 55%;
+  padding: 10px;
+  background: linear-gradient(135deg, #7e57c2, #64b5f6);
   color: white;
   border: none;
-  border-radius: 70px;
-  font-size: 18px;
+  border-radius: 30px;
+  font-size: 16px;
   cursor: pointer;
   transition: 0.3s;
 }
 
 button:hover {
-  background: #c68abd;
+  background: linear-gradient(135deg, #ba68c8, #4fc3f7);
+  transform: scale(1.05);
 }
 
 #error-msg {
-  color: red;
-  font-size: 0.9rem;
-  margin-top: 10px;
+  color: #e53935;
+  font-size: 0.85rem;
+  margin-top: 8px;
+  font-weight: 500;
 }
 
+/* Animation douce à l'ouverture */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-box {
+  animation: fadeIn 0.6s ease;
+}
