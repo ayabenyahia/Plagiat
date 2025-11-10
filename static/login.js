@@ -6,8 +6,8 @@
  const errorMsg = document.getElementById("error-msg");
 	
 	  // Identifiants valides
-  const validUsername = "admin";
-  const validPassword = "0000";
+  const validUsername = "aya";
+  const validPassword = "2006";
 	
 	  if (username === validUsername && password === validPassword) {
     localStorage.setItem("loggedIn", "true");

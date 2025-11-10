@@ -25,19 +25,22 @@ db_pool = mysql.connector.pooling.MySQLConnectionPool(
 
 # Fonction : ajout utilisateur à la blacklist
 
-from datetime import datetime
-import traceback
-
 def add_to_blacklist(nom_etudiant1, nom_etudiant2, similarity_percentage):
+    conn = None
+    cursor = None
     try:
+        # Obtenir une connexion depuis le pool
         conn = db_pool.get_connection()
         cursor = conn.cursor()
         print("Connexion OK, prêt à insérer dans la base...")
 
+        # Requête SQL d'insertion
         sql = """
-        INSERT INTO personnes_blacklist (nom_etudiant1, nom_etudiant2, similarite)
+        INSERT INTO personnes_blacklistees (etudiant1, etudiant2, taux_similarite)
         VALUES (%s, %s, %s)
         """
+
+        # Exécution de la requête
         cursor.execute(sql, (nom_etudiant1, nom_etudiant2, similarity_percentage))
         conn.commit()
 
@@ -46,11 +49,14 @@ def add_to_blacklist(nom_etudiant1, nom_etudiant2, similarity_percentage):
     except Exception as e:
         print(f"Erreur ajout blacklist: {e}")
         traceback.print_exc()
+
     finally:
-        if cursor:
+        # Fermeture sécurisée du curseur et de la connexion
+        if cursor is not None:
             cursor.close()
-        if conn:
+        if conn is not None:
             conn.close()
+
 
 
 # ROUTE 1 : Health Check
